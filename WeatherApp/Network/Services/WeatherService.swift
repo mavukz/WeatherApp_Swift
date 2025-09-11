@@ -1,5 +1,5 @@
 public protocol WeatherServicable {
-    func getCurrentForecast() async throws -> String
+    func getCurrentForecast() async throws -> WeatherResponse
 }
 
 public class WeatherService {
@@ -11,9 +11,9 @@ public class WeatherService {
 }
 
 extension WeatherService: WeatherServicable {
-    public func getCurrentForecast() async throws -> String {
+    public func getCurrentForecast() async throws -> WeatherResponse {
         do {
-            let response: String = try await apiClient.request(
+            let response: WeatherResponse = try await apiClient.request(
                 for: WeatherRoute
                     .current(
                         requestData: CurrentRequestData(

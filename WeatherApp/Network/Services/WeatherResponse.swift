@@ -1,4 +1,5 @@
 /// Generated from https://app.quicktype.io/
+/// Ideally would validate any in if indeed Int or should it be floating value
 public struct WeatherResponse: Codable {
     public let coord: Coord?
     public let weather: [Weather]?
