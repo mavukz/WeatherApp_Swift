@@ -1,16 +1,16 @@
 import Foundation
 
-public protocol RouteProvider {
+public protocol Routable {
     var headers: [String: String] { get }
     var path: String { get }
     var url: URL { get }
     var httpMethod: HttpMethod { get }
     var requestBody: Data? { get }
-    
+
     func encode<T: Encodable>(_ value: T) -> Data?
 }
 
-public extension RouteProvider {
+public extension Routable {
     var headers: [String: String] {
         [
             "Content-Type": "application/json",
@@ -23,7 +23,7 @@ public extension RouteProvider {
     var requestBody: Data? {
         nil
     }
-    
+
     func encode<T: Encodable>(_ value: T) -> Data? {
         do {
             let encoder = JSONEncoder()

@@ -16,9 +16,10 @@ struct ContentView: View {
             Text("Hello, world!")
         }
         .padding()
+        .task {
+            let service = WeatherService(apiClient: NetworkClient())
+            let results = try? await service.getCurrentForecast()
+            print(results ?? "")
+        }
     }
-}
-
-#Preview {
-    ContentView()
 }
