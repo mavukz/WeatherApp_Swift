@@ -2,7 +2,7 @@ import Foundation
 
 public enum WeatherRoute {
     case current(requestData: CurrentRequestData)
-    case forecast(_ days: Int)
+    case forecast(requestData: CurrentRequestData)
 }
 
 extension WeatherRoute: Routable {
@@ -14,8 +14,8 @@ extension WeatherRoute: Routable {
         switch self {
         case .current:
             "/data/2.5/weather"
-        case let .forecast(days):
-            "/forecast\(days)"
+        case .forecast:
+            "/data/2.5/forecast"
         }
     }
 
@@ -38,7 +38,18 @@ extension WeatherRoute: Routable {
                 ),
                 URLQueryItem(name: "appid", value: requestData.appId)
             ]
-        default: break
+        case let .forecast(requestData):
+            urlComponents.queryItems = [
+                URLQueryItem(
+                    name: "lat",
+                    value: requestData.latitude
+                ),
+                URLQueryItem(
+                    name: "lon",
+                    value: requestData.longitude
+                ),
+                URLQueryItem(name: "appid", value: requestData.appId)
+            ]
         }
 
         guard let url = urlComponents.url else {

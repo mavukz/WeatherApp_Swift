@@ -25,7 +25,7 @@ public struct Coord: Codable {
 
 public struct Main: Codable {
     public let temp, feelsLike, tempMin, tempMax: Double?
-    public let pressure, humidity, seaLevel, grndLevel: Int?
+    public let pressure, humidity, seaLevel, grndLevel: Int? // confirm if all needs to be Int or double
 
     enum CodingKeys: String, CodingKey {
         case temp

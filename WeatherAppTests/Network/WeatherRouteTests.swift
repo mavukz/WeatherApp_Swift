@@ -19,9 +19,14 @@ final class WeatherRouteTests: XCTestCase {
     }
 
     func testForecastRouteIsCorrect() {
-        let route = WeatherRoute.forecast(5)
+        let requestData = CurrentRequestData(
+            latitude: "100",
+            longitude: "200",
+            appId: "123"
+        )
+        let route = WeatherRoute.forecast(requestData: requestData)
 
-        XCTAssertEqual(route.url.absoluteString, "https://api.openweathermap.org/forecast5")
+        XCTAssertEqual(route.url.absoluteString, "https://api.openweathermap.org/data/2.5/forecast?lat=100&lon=200&appid=123")
         XCTAssertEqual(route.httpMethod, .get)
         XCTAssertNil(route.requestBody)
     }

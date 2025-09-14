@@ -11,7 +11,7 @@ struct ContentView: View {
         .padding()
         .task {
             let service = WeatherService(apiClient: NetworkClient())
-            let results = try? await service.getCurrentForecast()
+            let results = try? await service.getWeatherForecast()
             print(results ?? "")
         }
     }
