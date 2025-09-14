@@ -7,64 +7,115 @@ class ForecastViewModel: ObservableObject {
 
     private let weatherService: WeatherServiceable
 
-    private var currentWeatherResponse: WeatherResponse?
-
     init(weatherService: WeatherServiceable) {
         self.weatherService = weatherService
     }
 }
 
-// MARK: - Fetch Weather Data
-private extension ForecastViewModel {
-    func fetchCurrentWeather() {
+extension ForecastViewModel {
+    var dataState: DataState<ForecastDataModel> {
+        _dataState
+    }
+
+    func fetchWeatherData() {
         Task { @MainActor [weak self] in
-            guard let self else { return } // log non-fatal as we should have self here always
+            guard let self else { return }
 
             do {
-                let weatherResponse = try await  self.weatherService.getCurrentWeather()
-                currentWeatherResponse = weatherResponse
+                let weatherResponse = try await weatherService
+                    .getCurrentWeather()
+                let forecastResponse = try await weatherService
+                    .getWeatherForecast()
+                handleSuccessResponse(
+                    weatherResponse,
+                    forecastResponse: forecastResponse
+                )
             } catch {
-                handleFailedCurrentWeatherResponse(error)
+                handleFailedResponse(error)
             }
         }
     }
+}
 
-    func handleSuccessCurrentWeatherResponse(_ weatherResponse: WeatherResponse) {
+// MARK: - Fetch Weather Data
+private extension ForecastViewModel {
+
+    func handleSuccessResponse(
+        _ weatherResponse: MainWeatherResponse,
+        forecastResponse: ForecastResponse
+    ) {
         guard let currentTemperature = weatherResponse.main?.temp,
               let minTemperature = weatherResponse.main?.tempMin,
               let maxTemperature = weatherResponse.main?.tempMax,
               let headerDescription = weatherResponse.weather?.first?.main, // double check this if there is multiple
-              let responseItems = weatherResponse.weather
+              let responseItems = forecastResponse.list
         else { return }
 
         let forecast = ForecastDataModel(
-            headerTemperatureTitle: "\(String(format: "%.2f", currentTemperature))°",
-            headerDescription: headerDescription,
+            headerTemperatureTitle: "\(String(format: "%.0f", currentTemperature))°",
+            headerDescription: headerDescription.rawValue,
             headerForecastConfig: ForecastHeaderItemConfig(
-                minimumTemperature: "\(String(format: "%.2f", minTemperature))°",
-                currentTemperature: "\(String(format: "%.2f", currentTemperature))°",
-                maximumTemperature: "\(String(format: "%.2f", maxTemperature))°"
+                minimumTemperature: "\(String(format: "%.0f", minTemperature))°",
+                currentTemperature: "\(String(format: "%.0f", currentTemperature))°",
+                maximumTemperature: "\(String(format: "%.0f", maxTemperature))°"
             ),
-            forecastConfigItems: [] // Forecast api response to populate these
+            forecastConfigItems: mapForecastConfigItems(
+                from: responseItems
+            )
         )
         _dataState = .hasData(forecast)
     }
 
-//    func mapForecastConfigItems(
-//        from responseItems: []
-//    ) -> [ForecastItemConfig] {
-//        responseItems.compactMap {
-//            ForecastItemConfig(dayOfWeek: $0., iconName: <#T##ImageName#>, temperature: <#T##String#>)
-//        }
-//    }
+    func mapForecastConfigItems(from responseItems: [ListResponse]) -> [ForecastItemConfig] {
+        var configs: [ForecastItemConfig] = []
+        var daysOfWeek: [Int] = []
+        responseItems.forEach {
+            if let temperature = $0.main?.temp,
+               let date = getDate(from: $0) {
+                let calendar = Calendar.current
+                let dayOfWeek = calendar.component(.weekday, from: date)
+                let currentDayOfWeek = calendar.component(.weekday, from: Date())
 
-    func handleFailedCurrentWeatherResponse(_ error: any Error) {
+                if daysOfWeek
+                    .contains(dayOfWeek) == false &&
+                    (0...6).contains(dayOfWeek) &&
+                    dayOfWeek != currentDayOfWeek {
+                    daysOfWeek.append(dayOfWeek)
+
+                    let dateFormatter = DateFormatter()
+                    dateFormatter.dateFormat = "EEEE"
+                    let dayOfWeekString = dateFormatter.string(from: date)
+
+                    configs.append(
+                        ForecastItemConfig(
+                            dayOfWeek: dayOfWeekString,
+                            iconName: .partlySunny,
+                            temperature: "\(String(format: "%.0f", temperature))°"
+                        )
+                    )
+                }
+            }
+        }
+        return configs
+    }
+
+    @MainActor
+    func handleFailedResponse(_ error: any Error) {
         let forecast = ForecastDataModel(
             errorDataModel: ForecastErrorDataModel(
                 title: "Something went wrong!",
                 message: error.localizedDescription // ideally we should print user-friendly messages from API responses
             )
         )
-        _dataState = .error(error)
+        _dataState = .error(forecast)
+    }
+}
+
+private extension ForecastViewModel {
+    func getDate(from forecastListItem: ListResponse) -> Date? {
+        guard let responseDate = forecastListItem.dt else { return nil }
+
+        let timeInterval = TimeInterval(responseDate)
+        return Date(timeIntervalSince1970: timeInterval)
     }
 }

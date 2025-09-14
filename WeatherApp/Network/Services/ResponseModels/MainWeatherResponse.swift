@@ -1,29 +1,29 @@
 /// Generated from https://app.quicktype.io/
 /// Ideally would validate any in if indeed Int or should it be floating value
-public struct WeatherResponse: Codable {
-    public let coord: Coord?
-    public let weather: [Weather]?
+public struct MainWeatherResponse: Codable {
+    public let coord: CoordResponse?
+    public let weather: [WeatherResponse]?
     public let base: String?
-    public let main: Main?
+    public let main: MainResponse?
     public let visibility: Int?
-    public let wind: Wind?
-    public let clouds: Clouds?
+    public let wind: WindResponse?
+    public let clouds: CloudsResponse?
     public let dt: Int?
-    public let sys: Sys?
+    public let sys: SysResponse?
     public let timezone, id: Int?
     public let name: String?
     public let cod: Int?
 }
 
-public struct Clouds: Codable {
+public struct CloudsResponse: Codable {
     public let all: Int?
 }
 
-public struct Coord: Codable {
+public struct CoordResponse: Codable {
     public let lon, lat: Double?
 }
 
-public struct Main: Codable {
+public struct MainResponse: Codable {
     public let temp, feelsLike, tempMin, tempMax: Double?
     public let pressure, humidity, seaLevel, grndLevel: Int? // confirm if all needs to be Int or double
 
@@ -38,18 +38,26 @@ public struct Main: Codable {
     }
 }
 
-public struct Sys: Codable {
+public struct SysResponse: Codable {
     public let type, id: Int?
     public let country: String?
     public let sunrise, sunset: Int?
+    public let pod: PodResponse?
 }
 
-public struct Weather: Codable {
+public enum PodResponse: String, Codable {
+    case d = "d"
+    case n = "n"
+}
+
+public struct WeatherResponse: Codable {
     public let id: Int?
-    public let main, description, icon: String?
+    public let main: MainEnumResponse?
+    public let description, icon: String?
 }
 
-public struct Wind: Codable {
-    public let speed: Double?
-    public let deg: Int?
+public enum MainEnumResponse: String, Codable {
+    case clear = "Clear"
+    case clouds = "Clouds"
+    case rain = "Rain"
 }

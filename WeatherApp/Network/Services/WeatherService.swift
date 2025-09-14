@@ -1,6 +1,6 @@
 public protocol WeatherServiceable {
-    func getCurrentWeather() async throws -> WeatherResponse
-    func getWeatherForecast() async throws -> WeatherResponse
+    func getCurrentWeather() async throws -> MainWeatherResponse
+    func getWeatherForecast() async throws -> ForecastResponse
 }
 
 public class WeatherService {
@@ -12,9 +12,9 @@ public class WeatherService {
 }
 
 extension WeatherService: WeatherServiceable {
-    public func getCurrentWeather() async throws -> WeatherResponse {
+    public func getCurrentWeather() async throws -> MainWeatherResponse {
         do {
-            let response: WeatherResponse = try await apiClient.request(
+            let response: MainWeatherResponse = try await apiClient.request(
                 for: WeatherRoute
                     .current(
                         requestData: CurrentRequestData(
@@ -31,9 +31,9 @@ extension WeatherService: WeatherServiceable {
         }
     }
 
-    public func getWeatherForecast() async throws -> WeatherResponse {
+    public func getWeatherForecast() async throws -> ForecastResponse {
         do {
-            let response: WeatherResponse = try await apiClient.request(
+            let response: ForecastResponse = try await apiClient.request(
                 for: WeatherRoute
                     .forecast(
                         requestData: CurrentRequestData(

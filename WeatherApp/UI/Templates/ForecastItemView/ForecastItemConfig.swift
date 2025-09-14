@@ -1,6 +1,7 @@
 import Foundation
 
-struct ForecastItemConfig {
+struct ForecastItemConfig: Identifiable {
+    let id = UUID()
     private let dayOfWeek: String
     let iconName: ImageName
     private let temperature: String
