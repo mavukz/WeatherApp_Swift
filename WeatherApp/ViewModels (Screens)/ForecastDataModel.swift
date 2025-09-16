@@ -1,4 +1,5 @@
 import Foundation
+import SwiftUICore
 
 /// This is the representation of all the data for this specific screen, all the models for all the components for this screen. Similar to Configs to template, this is for the entire screen.
 /// Keeping all these optionals so that if there was a service error, then only service error data is presented
@@ -26,12 +27,20 @@ extension ForecastDataModel {
     var attributedHeaderTemperatureTitle: AttributedString? {
         guard let headerTemperatureTitle else { return nil }
 
-        return AttributedString(headerTemperatureTitle)
+        var attributedString = AttributedString(headerTemperatureTitle)
+        attributedString.font = Font.system(size: 48, weight: .bold)
+        attributedString.foregroundColor = .white
+
+        return attributedString
     }
 
     var attributedHeaderDescription: AttributedString? {
         guard let headerDescription else { return nil }
 
-        return AttributedString(headerDescription)
+        var attributedString = AttributedString(headerDescription)
+        attributedString.font = Font.system(size: 32, weight: .semibold)
+        attributedString.foregroundColor = .white
+
+        return attributedString
     }
 }

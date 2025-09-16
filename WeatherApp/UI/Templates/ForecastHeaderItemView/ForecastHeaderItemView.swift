@@ -5,11 +5,20 @@ struct ForecastHeaderItemView: View {
 
     var body: some View {
         HStack(alignment: .center) {
-            Text(viewConfig.attributedMinTemperature)
-                .frame(maxWidth: .infinity, alignment: .center)
-            Text(viewConfig.attributedCurrentTemperature)
-            Text(viewConfig.attributedMaxTemperature)
-                .frame(maxWidth: .infinity, alignment: .center)
+            VStack {
+                Text(viewConfig.attributedMinTemperature)
+                Text(viewConfig.attributedMinTemperatureDescription)
+            }
+            VStack {
+                Text(viewConfig.attributedCurrentTemperature)
+                    .frame(maxWidth: .infinity, alignment: .center)
+                Text(viewConfig.attributedCurrentTemperatureDescription)
+                    .frame(maxWidth: .infinity, alignment: .center)
+            }
+            VStack {
+                Text(viewConfig.attributedMaxTemperature)
+                Text(viewConfig.attributedMaxTemperatureDescription)
+            }
         }
     }
 }

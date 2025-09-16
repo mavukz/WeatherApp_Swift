@@ -15,10 +15,18 @@ struct ForecastItemConfig: Identifiable {
 
 extension ForecastItemConfig {
     var attributedDayOfWeek: AttributedString {
-        AttributedString(dayOfWeek) // customize font here
+        var attributedString = AttributedString(dayOfWeek)
+        attributedString.font = .systemFont(ofSize: 16)
+        attributedString.foregroundColor = .white
+
+        return attributedString
     }
 
     var attributedTemperature: AttributedString {
-        AttributedString(temperature)
+        var attributedString = AttributedString(temperature)
+        attributedString.font = .systemFont(ofSize: 16)
+        attributedString.foregroundColor = .white
+
+        return attributedString
     }
 }

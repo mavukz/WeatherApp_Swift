@@ -52,12 +52,15 @@ private extension ForecastViewModel {
         else { return }
 
         let forecast = ForecastDataModel(
-            headerTemperatureTitle: "\(String(format: "%.0f", currentTemperature))°",
+            headerTemperatureTitle: "\(String(format: "%.0f", currentTemperature))",
             headerDescription: headerDescription.rawValue,
             headerForecastConfig: ForecastHeaderItemConfig(
-                minimumTemperature: "\(String(format: "%.0f", minTemperature))°",
-                currentTemperature: "\(String(format: "%.0f", currentTemperature))°",
-                maximumTemperature: "\(String(format: "%.0f", maxTemperature))°"
+                minimumTemperature: "\(String(format: "%.0f", minTemperature))",
+                minimumTemperatureDescription: "min",
+                currentTemperature: "\(String(format: "%.0f", currentTemperature))",
+                currentTemperatureDescription: "Current",
+                maximumTemperature: "\(String(format: "%.0f", maxTemperature))",
+                maximumTemperatureDescription: "max"
             ),
             forecastConfigItems: mapForecastConfigItems(
                 from: responseItems
@@ -90,7 +93,7 @@ private extension ForecastViewModel {
                         ForecastItemConfig(
                             dayOfWeek: dayOfWeekString,
                             iconName: .partlySunny,
-                            temperature: "\(String(format: "%.0f", temperature))°"
+                            temperature: "\(String(format: "%.0f", temperature))"
                         )
                     )
                 }
